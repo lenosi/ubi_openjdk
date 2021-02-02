@@ -1,11 +1,10 @@
 ARG UBI_VERSION=7
-ARG UBI_VERSION_MINOR=9
 ARG OPENJDK_VERSION=8
 ARG MAVEN_VERSION=3.6.3
 
 ARG IMAGE_BASE=quai.io/rhmessagingqe/ubi${UBI_VERSION}-openjdk-jdk
 
-FROM ${IMAGE_BASE}:${OPENJDK_VERSION} AS UBI
+FROM ${IMAGE_BASE}:${OPENJDK_VERSION} AS ubi
 LABEL name="UBI ${UBI_VERSION} | OpenJDK ${OPENJDK_VERSION} | Maven ${MAVEN_VERSION}" \
       release="${MAVEN_VERSION}" \
       maintaner="Dominik Lenoch <dlenoch@redhat.com>" \
