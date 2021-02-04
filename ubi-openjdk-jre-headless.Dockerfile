@@ -19,5 +19,5 @@ FROM ubi as ubi_jdk8
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 ENV OPENJDK_PACKAGE=java-1.8.0-openjdk-headless
 
-FROM ubi_jdk8${OPENJDK_VERSION} AS final
+FROM ubi_jdk${OPENJDK_VERSION} AS final
 RUN microdnf install ${OPENJDK_PACKAGE} -y --nodocs && microdnf clean all
