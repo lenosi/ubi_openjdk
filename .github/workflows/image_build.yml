@@ -14,8 +14,10 @@ jobs:
         include:
         - UBI_VERSION: 7
           UBI_VERSION_MINOR: 9
+          UBI_ARCH: linux/amd64,linux/ppc64le,linux/s390x
         - UBI_VERSION: 8
           UBI_VERSION_MINOR: 3
+          UBI_ARCH: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
         OPENJDK_VERSION: [8,11]
         IMAGE: ['jdk','jre','jre-headless']
     steps:
@@ -40,7 +42,7 @@ jobs:
         with:
           context: .
           file: ./ubi-openjdk-${{ matrix.IMAGE }}.Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
+          platforms: ${{ matrix.UBI_ARCH }}
           build-args: |
             UBI_VERSION=${{ matrix.UBI_VERSION }}
             UBI_VERSION_MINOR=${{ matrix.UBI_VERSION_MINOR }}
