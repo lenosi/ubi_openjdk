@@ -42,7 +42,7 @@ jobs:
           file: ./ubi-openjdk-${{ matrix.IMAGE }}.Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
           build-args: |
-            UBI_VERSION={{ matrix.UBI_VERSION }}
+            UBI_VERSION=${{ matrix.UBI_VERSION }}
             UBI_VERSION_MINOR=${{ matrix.UBI_VERSION_MINOR }}
             OPENJDK_VERSION=${{ matrix.OPENJDK_VERSION }}
           push: true
