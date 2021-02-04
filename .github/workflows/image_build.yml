@@ -39,7 +39,21 @@ jobs:
           username: ${{ secrets.QUAY_USER }}
           password: ${{ secrets.QUAY_PASS }}
 
-      - name: Build and push OpenJDK images
+      # - name: Build and push OpenJDK images
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     file: ./ubi-openjdk-${{ matrix.IMAGE }}.Dockerfile
+      #     platforms: ${{ matrix.UBI_ARCH }}
+      #     build-args: |
+      #       UBI_VERSION=${{ matrix.UBI_VERSION }}
+      #       UBI_VERSION_MINOR=${{ matrix.UBI_VERSION_MINOR }}
+      #       OPENJDK_VERSION=${{ matrix.OPENJDK_VERSION }}
+      #     push: true
+      #     tags: |
+      #       quay.io/rhmessagingqe/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
+     
+      - name: Push to GitHub Packages
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -49,6 +63,10 @@ jobs:
             UBI_VERSION=${{ matrix.UBI_VERSION }}
             UBI_VERSION_MINOR=${{ matrix.UBI_VERSION_MINOR }}
             OPENJDK_VERSION=${{ matrix.OPENJDK_VERSION }}
-          push: true
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: enkeys/ubi_openjdk/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}
+          tag_with_ref: true
           tags: |
-            quay.io/rhmessagingqe/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
+            docker.pkg.github.com/enkeys/ubi_openjdk/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
