@@ -70,6 +70,5 @@ jobs:
             UBI_VERSION=${{ matrix.UBI_VERSION }}
             UBI_VERSION_MINOR=${{ matrix.UBI_VERSION_MINOR }}
             OPENJDK_VERSION=${{ matrix.OPENJDK_VERSION }}
-          repository: enkeys/ubi_openjdk/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}
           tags: |
             docker.pkg.github.com/enkeys/ubi_openjdk/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
