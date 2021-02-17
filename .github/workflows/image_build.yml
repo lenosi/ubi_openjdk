@@ -21,52 +21,96 @@ jobs:
         OPENJDK_VERSION: [8,11]
         IMAGE: ['jdk','jre','jre-headless']
     steps:
+      - name: Set variables
+        id: set_variables
+        run: |
+          echo "IMAGE_NAME=ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}" >> $GITHUB_ENV
+          echo "QUAY_TAG=quay.io/rhmessagingqe/${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
+          echo "GITHUB_TAG=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
+          echo "DOCKER_FILE=./ubi-openjdk-${{ matrix.IMAGE }}.Dockerfile" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-        with:
-          driver-opts: image=moby/buildkit:master
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
+      #   with:
+      #     driver-opts: image=moby/buildkit:master
 
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+      # - name: Cache Docker layers
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: /tmp/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-
 
-      - name: Login to Quay Registry
-        uses: docker/login-action@v1
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
         with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USER }}
-          password: ${{ secrets.QUAY_PASS }}
-
-      - name: Login to GitHub Packages Docker Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./ubi-openjdk-${{ matrix.IMAGE }}.Dockerfile
-          platforms: ${{ matrix.UBI_ARCH }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          archs: ${{ matrix.UBI_ARCH }}
+          image: ${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ env.QUAY_TAG }}
+            ${{ env.GITHUB_TAG }}
+          dockerfiles: |
+            ${{ env.DOCKER_FILE }}
           build-args: |
             UBI_VERSION=${{ matrix.UBI_VERSION }}
             UBI_VERSION_MINOR=${{ matrix.UBI_VERSION_MINOR }}
             OPENJDK_VERSION=${{ matrix.OPENJDK_VERSION }}
-          push: true
-          tags: |
-            ghcr.io/enkeys/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
-            quay.io/rhmessagingqe/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
+
+      # - name: Login to Quay Registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: quay.io
+      #     username: ${{ secrets.QUAY_USER }}
+      #     password: ${{ secrets.QUAY_PASS }}
+
+      - name: Push To Quay
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.QUAY_TAG }}
+          registry: quay.io
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_PASS }}
+    
+      - name: Push To GitHub
+        id: push-to-github
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.GITHUB_TAG }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Login to GitHub Packages Docker Registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.repository_owner }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Build and push image
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     file: ./ubi-openjdk-${{ matrix.IMAGE }}.Dockerfile
+      #     platforms: ${{ matrix.UBI_ARCH }}
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache
+      #     build-args: |
+      #       UBI_VERSION=${{ matrix.UBI_VERSION }}
+      #       UBI_VERSION_MINOR=${{ matrix.UBI_VERSION_MINOR }}
+      #       OPENJDK_VERSION=${{ matrix.OPENJDK_VERSION }}
+      #     push: true
+      #     tags: |
+      #       ghcr.io/${{ github.repository_owner }}/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
+      #       quay.io/rhmessagingqe/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
