@@ -68,5 +68,5 @@ jobs:
             OPENJDK_VERSION=${{ matrix.OPENJDK_VERSION }}
           push: true
           tags: |
-            docker.pkg.github.com/enkeys/ubi_openjdk/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
+            ghcr.io/enkeys/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
             quay.io/rhmessagingqe/ubi${{ matrix.UBI_VERSION }}-openjdk-${{ matrix.IMAGE }}:${{ matrix.OPENJDK_VERSION }}
