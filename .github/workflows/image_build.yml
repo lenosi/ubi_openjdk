@@ -14,10 +14,12 @@ jobs:
         include:
         - UBI_VERSION: 7
           UBI_VERSION_MINOR: 9
-          UBI_ARCH: linux/amd64,linux/ppc64le,linux/s390x
+          # UBI_ARCH: linux/amd64,linux/ppc64le,linux/s390x
+          UBI_ARCH: amd64,ppc64le,s390x
         - UBI_VERSION: 8
           UBI_VERSION_MINOR: 3
-          UBI_ARCH: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
+          # UBI_ARCH: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
+          UBI_ARCH: amd64,arm64,ppc64le,s390x
         OPENJDK_VERSION: [8,11]
         IMAGE: ['jdk','jre','jre-headless']
     steps:
