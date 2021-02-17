@@ -11,11 +11,11 @@ LABEL name="UBI ${UBI_VERSION} | OpenJDK ${OPENJDK_VERSION} JRE headless" \
       run="docker run --rm -ti <image_name:tag> /bin/bash" \
       summary="Red Hat Messaging QE Docker Image for OpenJDK on ubi${UBI_VERSION} minimal"
 
-FROM ubi as ubi_jdk11
+FROM ubi AS ubi_jdk11
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 ENV OPENJDK_PACKAGE=java-11-openjdk
 
-FROM ubi as ubi_jdk8
+FROM ubi AS ubi_jdk8
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 ENV OPENJDK_PACKAGE=java-1.8.0-openjdk
 
