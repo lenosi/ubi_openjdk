@@ -20,4 +20,4 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 ENV OPENJDK_PACKAGE=java-1.8.0-openjdk-devel
 
 FROM ubi_jdk${OPENJDK_VERSION} AS final
-RUN microdnf install "${OPENJDK_PACKAGE}" -y --nodocs && microdnf clean all
+RUN microdnf --setopt=tsflags=nodocs install "${OPENJDK_PACKAGE}" -y && microdnf clean all
